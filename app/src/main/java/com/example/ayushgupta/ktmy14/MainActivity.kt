@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     var btn2: Button? = null
     var btn3: Button? = null
     var btn4: Button? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
