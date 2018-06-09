@@ -1,5 +1,6 @@
 package com.example.ayushgupta.ktmy14
 
+import android.app.Fragment
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -19,25 +20,34 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
 
     var tv1: TextView? = null
+    var tv2: TextView? = null
     var btn1: Button? = null
     var btn2: Button? = null
     var btn3: Button? = null
+    var btn4: Button? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val fManager = fragmentManager.beginTransaction()
+        val ll1: LinearLayout? = findViewById(R.id.ll1)
         tv1 = findViewById(R.id.tv1)
+        tv2 = findViewById(R.id.tv2)
         btn1 = findViewById(R.id.btn1)
         btn2 = findViewById(R.id.btn2)
         btn3 = findViewById(R.id.btn3)
+        btn4 = findViewById(R.id.btn4)
         if (getPermission()) {
             btn1?.setOnClickListener {
+                ll1?.visibility = View.GONE
                 tv1?.visibility = View.VISIBLE
+                tv1?.text = ""
                 val mLocation = getSystemService(Context.LOCATION_SERVICE) as LocationManager
                 val result = checkPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION, 1, 2)
                 if (result == PackageManager.PERMISSION_GRANTED)
@@ -74,6 +84,9 @@ class MainActivity : AppCompatActivity() {
                 mNotify.notify(102, mNotification.build())
             }
             btn3?.setOnClickListener {
+                ll1?.visibility = View.GONE
+                tv2?.visibility = View.VISIBLE
+                tv2?.text = ""
                 val mSensor = getSystemService(Context.SENSOR_SERVICE) as SensorManager
                 val sensor = mSensor.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
                 mSensor.registerListener(object : SensorEventListener {
@@ -81,12 +94,19 @@ class MainActivity : AppCompatActivity() {
                     }
 
                     override fun onSensorChanged(event: SensorEvent?) {
-                        tv1?.visibility = View.VISIBLE
                         val str = "X: ${event?.values?.get(0)} Y: ${event?.values?.get(1)}"
-                        tv1?.text = str
+                        tv2?.text = str
                     }
 
-                },sensor,SensorManager.SENSOR_DELAY_NORMAL)
+                }, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            }
+            btn4?.setOnClickListener {
+                tv1?.visibility = View.GONE
+                tv2?.visibility = View.GONE
+                fManager.remove(Fragment())
+                fManager.replace(R.id.flt, WifiFrag())
+                fManager.addToBackStack("true")
+                fManager.commit()
             }
         }
     }
